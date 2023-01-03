@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Data Mahasiswa
+{% endblock title %}
+
+
+{% block header %}
+
+<div class="row">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<h1 class="mt-4">Mahasiswa</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item active">Laporan</li>
+</ol>
+{% endblock header %}
+
+{% block cardheader %}
+<i class="fas fa-table me-1"></i>
+Data Mahasiswa
+{% endblock cardheader %}
+
+{% block cardtable %}
+<div class="container overflow-hidden">
+    <div class="row">
+        <div class="col-2">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addnewmember">
+                Tambah Mahasiswa
+            </button>
+        </div>
+        <div class="col">
+            <form action="{% url 'exportmahasiswa' %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-success" type="submit">Export</button>
+            </form>
+            <div class="row">
+                <div class="col col-sm-12">
+                    <a href="/admins/trainimages" class="btn btn-warning">Train</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addimage">
+                Tambah Foto
+            </button>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="addnewmember" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Tambah Mahasiswa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="/admins/createmember/">
+                    {% csrf_token %}
+                    {{ memberform.as_p }}
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" value="Submit" id="submit">Submit</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addimage" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Tambah Foto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="/admins/adddataset/" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ imageform.as_p }}
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" value="Submit" id="submit">create dataset</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<hr style="border-top:1px solid #000; clear:both;" />
+<table id="datatablesSimple" class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Nim</th>
+            <th>Nama</th>
+            <th>Kelas</th>
+            <th>Semester</th>
+            <th>Telepon</th>
+            <th>Alamat</th>
+            <th>Jenis Kelamin</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for Member in Members %}
+        <tr>
+            <td>{{ Member.nim }}</td>
+            <td>{{ Member.nama }}</td>
+            <td>{{ Member.golongan }}</td>
+            <td>{{ Member.semester }}</td>
+            <td>{{ Member.telepon }}</td>
+            <td>{{ Member.alamat }}</td>
+            <td>{{ Member.jenisKelamin }}</td>
+            <td>
+                <div class="row justify-content-start">
+                    <div class="col-5">
+                        <form action="{% url 'edit-member' Member.id %}" method="post">
+                            {% csrf_token %}
+                            <button class="btn btn-warning" type="submit"><i class="fa fa-pencil"></i></button>
+                        </form>
+                    </div>
+                    <div class="col-3">
+                        <form action="{% url 'delete-member' Member.id %}" method="post">
+                            {% csrf_token %}
+                            <button class="btn btn-danger" type="submit"><i class="fa fa-trash"
+                                    onclick="return confirm('Are you sure want to delete ?')"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock cardtable %}

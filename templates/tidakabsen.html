@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Absensi
+{% endblock title %}
+
+{% block header %}
+<h1 class="mt-4">Tidak Absen</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item active">Laporan</li>
+</ol>
+{% endblock header %}
+
+{% block cardheader %}
+<i class="fas fa-table me-1"></i>
+Data Presensi
+
+{% endblock cardheader %}
+
+{% block cardtable %}
+<table id="datatablesSimple">
+    <thead>
+        <tr>
+            <th>Nim</th>
+            <th>Nama</th>
+            <th>Kelas</th>
+            <th>Semester</th>
+            <th>Mata Kuliah</th>
+            <th>Ruangan</th>
+            <th>Waktu</th>
+            <th>Status</th>
+            <th>Keterangan</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>Nim</th>
+            <th>Nama</th>
+            <th>Kelas</th>
+            <th>Semester</th>
+            <th>Mata Kuliah</th>
+            <th>Ruangan</th>
+            <th>Waktu</th>
+            <th>Status</th>
+            <th>Keterangan</th>
+            <th>Action</th>
+        </tr>
+    </tfoot>
+    <tbody>
+        <tr>
+            <td>E41202174</td>
+            <td>Andi</td>
+            <td>D</td>
+            <td>5</td>
+            <td>Workshop Sistem Cerdas</td>
+            <td>3.11</td>
+            <td>13.00 - 15.00</td>
+            <td>Tidak Hadir</td>
+            <td>Sakit</td>
+            <td>-</td>
+        </tr>
+    </tbody>
+</table>
+{% endblock cardtable %}

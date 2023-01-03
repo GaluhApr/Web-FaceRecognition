@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Startup preview - Main page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="custom" content="MTg0NjYx" id="snextras">
+  <link rel="icon" href="{% static 'assets/django-logo-negative.ico' %}">
+
+  <link rel="stylesheet" href="{% static 'assets/css/aos.css' %}">
+  <link href="{% static 'assets/css/styles.min.css' %}" rel="stylesheet" id="sf-custom-css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="{% static 'assets/sweetalert.min.js' %}"></script>
+  
+  <meta name="twitter:card" content="summary_large_image">
+  {% include "snippets/style.html" %}
+  
+</head>
+
+<body data-aos-easing="ease-out-cubic" data-aos-duration="500" data-aos-delay="0">
+  <!-- Navigation 1 -->
+  {% include "snippets/navscreen.html" %}
+  <!-- Call to action 3 -->
+  
+    <div class="container ">
+      <div class="row align-items-center justify-content-center justify-content-lg-start">
+        <div class="col-8 col-md-6 h-100 p-5 bg-light border rounded-1">
+          <!-- <video id="video" width="100%" height="100%" autoplay></video> -->
+          <img src="{% url 'video_stream' %}" alt="Video stream">
+          <div class="modal-body">
+            <form method="POST" action="{%  url 'detectimage' %}">
+              {% csrf_token %}
+              <button id="absen" class="btn btn-sm btn-action-1 rounded-2 w-100">Click For
+                Attendance</button>
+            </div>
+        
+        </div>
+        <div class="ps-lg-12 ps-xl-3 col-sm-10 col-md-8 col-lg-6 col-xl-6">
+          <div class="col-md-12">
+            <br>
+            <div class="h-100 p-5 bg-light border rounded-1">
+              <h2>Data Absensi</h2>
+              <p>Wajah Terdeteksi : Tanggal 28/10/2022 Waktu 07:55:51 AM</p>
+              <div class="h-100 p-5 bg-light border rounded-1">
+                <canvas id="canvas" width="550" height="420"></canvas>
+              </div>
+              <p>Terdeteksi Merupakan User : Mr.X</p>
+              <p>Selamat Kamu Telah berhasil melakukan Absensi Pada : Jum'at 28/10/2022 Waktu 07:55:51 AM</p>
+            </div>
+            <br>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!-- Contact 5 -->
+
+  <!-- Footer 4 -->
+  <footer class="py-4 bg-light mt-auto">
+    <div class="container-fluid px-4">
+        <div class="d-flex align-items-center justify-content-between small">
+            <div class="text-muted">Copyright &copy; Newbie Team</div>
+            <div>
+                <a href="#">Privacy Policy</a>
+                &middot;
+                <a href="#">Terms &amp; Conditions</a>
+            </div>
+        </div>
+    </div>
+</footer>
+  <script type="text/javascript" src="{% static 'assets/datatable/datatables.min.js' %}"></script>
+  <!-- Bootstrap 5.1.2 JS -->
+  <script src="{% static 'assets/js/bootstrap.bundle.min.js' %}" data-integrity="38d870e9c3c4e532551b530706abb811">
+  </script>
+  <!-- AOS 3.0.0-beta.6 plugin JS (Animations) -->
+  <script src="{% static 'assets/js/aos.js' %}"></script>
+  <!-- Startup Plugins 5.4.672 -->
+  <script src="{% static 'assets/js/plugins.min.js' %}"></script>
+  <!-- Startup JS (Custom js for all blocks) - Remove ".min" if you want to edit a JS code 5.04.672 -->
+  <script src="{% static 'assets/js/scripts.min.js' %}"></script>
+
+  <!-- Script Untuk WebCam -->
+  <!-- <script>
+    // Untuk memberitahu Element HTML yang bakal diletak camera nya dimana
+    var video = document.getElementById('video');
+    // Untuk Meminta Akses Kamera!
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      // Karna cuman mau ambil audio sintaks ini tidak di tambakah `{ audio: true }`
+      navigator.mediaDevices.getUserMedia({
+        video: true
+      }).then(function (stream) {
+        //video.src = window.URL.createObjectURL(stream);
+        video.srcObject = stream;
+        video.play();
+      });
+    }
+
+    // Untuk deklarasi Element yang akan digunakan untuk Menggambil Gambar
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var video = document.getElementById('video');
+    // Berfungsi untuk mengamnbil Gambar
+    document.getElementById("absen").addEventListener("click", function () {
+      context.drawImage(video, 0, 0, 550, 420);
+    });
+  </script> -->
+
+  <!-- Script Untuk Alert Box Menggunakan SweetAlert1 -->
+  <!-- <script type="text/javascript">
+    function absen() {
+      swal({
+        title: "Berhasil Absen!",
+        text: "Kamu Berhasil Absensi Menggunakan Wajahmu",
+        icon: "success"
+      });
+    }
+  </script> -->
+
+  <!-- Script Untuk Search Table -->
+  <script>
+    $(document).ready(function () {
+      $('#table_id').DataTable();
+    });
+  </script>
+</body>
+
+</html>
