@@ -4,10 +4,11 @@ from . import views
 
 
 urlpatterns = [
-    path('video_stream/', views.video_stream, name='video_stream'),
+    path('addvideostream/', views.addvideo_stream, name='addvideostream'),
+    path('videostream/', views.video_stream, name='videostream'),
     path('detectimage', views.detect,name='detectimage'),
     path('trainimages/', views.trainer, name='trainimages'),
-    path('adddataset/', views.create_dataset, name='add-dataset'),
+    path('adddataset/', views.create_dataset, name='adddataset'),
     path('deletedosen/<int:id>', views.delete_dosen, name='delete-dosen'),
     path('deletemember/<int:id>', views.delete_member, name="delete-member"),
     path('deletematkul/<int:id>', views.delete_matakuliah, name="delete-matkul"),

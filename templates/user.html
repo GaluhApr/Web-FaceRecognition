@@ -85,6 +85,10 @@ Data Mahasiswa
                     {% csrf_token %}
                     {{ imageform.as_p }}
             </div>
+            <div class="col-md-8">
+                {% csrf_token %}
+                <img src="{% url 'addvideostream'%}" width="100%" class="img-thumbnail">
+            </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary" value="Submit" id="submit">create dataset</button>
             </div>

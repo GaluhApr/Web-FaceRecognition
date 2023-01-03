@@ -16,68 +16,19 @@ from django.conf import settings
 from django.contrib import messages
 import numpy as np
 import os
+from django.http.response import StreamingHttpResponse
 
 BASE_DIR = getattr(settings, 'BASE_DIR')
 
 # Create your views here.
+def addvideo_stream(request):
+    return StreamingHttpResponse(create_dataset(request),content_type='multipart/x-mixed-replace; boundary=frame')
 
 def video_stream(request):
-    faceDetect = cv2.CascadeClassifier(BASE_DIR + '/ml/haarcascade_frontalface_default.xml')
-
-    cam = cv2.VideoCapture(0)
     
-    # creating recognizer
-    rec = cv2.face.LBPHFaceRecognizer_create();
-    # loading the training data
-    rec.read(BASE_DIR + '/ml/recognizer/trainer.yml')
-    getId = 0
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    userId = 0
-    while (True):
-        ret, img = cam.read()
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        faces = faceDetect.detectMultiScale(gray, 1.3, 5)
-        for (x, y, w, h) in faces:
-            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    return StreamingHttpResponse(detect(request),content_type='multipart/x-mixed-replace; boundary=frame')
 
-            getId, conf = rec.predict(gray[y:y + h, x:x + w])  # This will predict the id of the face
-            print(getId, conf)
-            confidence = "  {0}%".format(round(100 - conf))
-            # print conf;
-            if conf < 35:
-                try:
-                    user = Mahasiswa.objects.get(id=getId)
-                except  Mahasiswa.DoesNotExist:
-                    pass
-
-                print("User Name", user.nama)
-
-                userId = getId
-                if user.nama:
-                    cv2.putText(img, user.nama, (x+5, y+h-10), font, 1, (0, 255, 0), 2)
-                else:
-                    cv2.putText(img, "Detected", (x, y + h), font, 1, (0, 255, 0), 2)
-            else:
-                cv2.putText(img, "Unknown", (x, y + h), font, 1, (0, 0, 255), 2)
-
-            cv2.putText(img, str(confidence), (x + 5, y - 5), font, 1, (255, 255, 0), 1)
-            # Printing that number below the face
-            # @Prams cam image, id, location,font style, color, stroke
-
-        cv2.imshow("Face", img)
-        if (cv2.waitKey(1) == ord('q')):
-            break
-        #elif (userId != 0):
-        #    cv2.waitKey(1000)
-        #    cam.release()
-        #    cv2.destroyAllWindows()
-        #    return redirect('/records/details/' + str(userId))
-
-    cam.release()
-    cv2.destroyAllWindows()
-    return redirect('attendance')
-
-
+		
 def detect(request):
     faceDetect = cv2.CascadeClassifier(BASE_DIR + '/ml/haarcascade_frontalface_default.xml')
 
@@ -120,7 +71,10 @@ def detect(request):
             # Printing that number below the face
             # @Prams cam image, id, location,font style, color, stroke
 
-        cv2.imshow("Face", img)
+        frame = cv2.imencode('.jpg', img)[1].tobytes()
+        yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+
         if (cv2.waitKey(1) == ord('q')):
             break
         #elif (userId != 0):

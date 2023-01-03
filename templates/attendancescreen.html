@@ -28,7 +28,10 @@
       <div class="row align-items-center justify-content-center justify-content-lg-start">
         <div class="col-8 col-md-6 h-100 p-5 bg-light border rounded-1">
           <!-- <video id="video" width="100%" height="100%" autoplay></video> -->
-          <img src="{% url 'video_stream' %}" alt="Video stream">
+          <div class="col-md-8">
+            {% csrf_token %}
+            <img src="{% url 'videostream'%}" width="100%" class="img-thumbnail">
+        </div>
           <div class="modal-body">
             <form method="POST" action="{%  url 'detectimage' %}">
               {% csrf_token %}
