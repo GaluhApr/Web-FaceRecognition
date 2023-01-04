@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse
-from .models import Mahasiswa, Matkul, Dosen, Jadwal
+from .models import Mahasiswa, Matkul, Dosen, Jadwal, Absen
 from .forms import Memberform, matakuliahform, dosenform, jadwalform, UserSelection
 from django.core.files.storage import FileSystemStorage
 from PIL import Image
@@ -21,11 +21,19 @@ from django.http.response import StreamingHttpResponse
 BASE_DIR = getattr(settings, 'BASE_DIR')
 
 # Create your views here.
+
+def absensi(request):
+    absensi = Absen.objects.all()
+    context = {
+        'Absen' : absensi,
+    }
+    return render(request, 'attendancescreen.html', context)
+
 def addvideo_stream(request):
     return StreamingHttpResponse(create_dataset(request),content_type='multipart/x-mixed-replace; boundary=frame')
 
 def video_stream(request):
-    
+
     return StreamingHttpResponse(detect(request),content_type='multipart/x-mixed-replace; boundary=frame')
 		
 def detect(request):
