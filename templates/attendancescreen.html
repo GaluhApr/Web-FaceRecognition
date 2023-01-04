@@ -3,145 +3,102 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>
-        {% block title %}
-        {% endblock title %}
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title>
+    {% block title %}
+    {% endblock title %}
 
-    </title>
-    {% include "snippets/style.html" %}
+  </title>
+  {% include "snippets/style.html" %}
 
 </head>
 
 <body class="sb-nav-fixed">
 
-    <!-- navbar -->
-    {% include "snippets/navscreen.html" %}
-    <div id="layoutSidenav_content">
-        <main>
-            <div class="container-fluid px-4">
-                {% block header %}
+  <!-- navbar -->
+  {% include "snippets/navscreen.html" %}
+  <div id="layoutSidenav_content">
+    <main>
+      <div class="container-fluid px-4">
+        {% block header %}
 
-                {% endblock header %}
-                <div class="card mb-4">
-                    <div class="card-header">
-                        {% block cardheader %}
-                        
-
+        {% endblock header %}
+        <div class="card mb-4">
+          <div class="card-header">
+            {% block cardheader %}
 
 
-                        {% endblock cardheader %}
-                    </div>
-                    <div class="card-body">
-                        {% block cardtable %}
-                        <div class="container-fluid">
-                          <div class="row mt-5 mb-5">
-                              <div class="col-md-8">
-                                  <img src="{% url 'videostream' %}" width="80%" class="img-thumbnail">
-                              </div>
-                              <div class="col-md-4" style="height:500px; overflow-y:auto;">
-                                  <h3>Today Scan</h3>
-                                  <table class="table">
-                                      <thead>
-                                          <tr>
-                                              <th>ID</th>
-                                              <th>NAMA</th>
-                                              <th>TANGGAL</th>
-                                              <th>WAKTU</th>
-                                          </tr>
-                                      </thead>
-                                      <tbody id="scandata" >
-                      
-                                      </tbody>
-                                  </table>
-                              </div>
-                          </div>
-                        </div>
-                        
-                        <script type="text/javascript">
-                          $(document).ready(function () {
-                              let lastcnt = 0;
-                              let cnt;
-                              chkNewScan();
-                        
-                              function chkNewScan() {
-                                  countTodayScan();
-                                  setTimeout(chkNewScan, 1000);
-                              }
-                        
-                              function countTodayScan() {
-                                  $.ajax({
-                                      url: '/counttoday',
-                                      type: 'GET',
-                                      dataType: 'json',
-                                      success: function (data) {
-                                          cnt = data.rowcount;
-                                          if (cnt > lastcnt) {
-                                              reloadTable();
-                                          }
-                        
-                                          lastcnt = cnt;
-                                      },
-                                      error: function (result) {
-                                          console.log('no result!')
-                                      }
-                                  })
-                              }
-                        
-                              function reloadTable() {
-                                  $.ajax({
-                                      url: '/loaddata',
-                                      type: 'GET',
-                                      dataType: 'json',
-                                      success: function (response) {
-                                          var tr = $("#scandata");
-                                          tr.empty();
-                        
-                                          $.each(response, function (index, item) {
-                                              if (item.length > 0) {
-                                                  for (let i = 0; i < item.length; i++) {
-                                                      tr.append('<tr>' +
-                                                          '<td>' + item[i][1] + '</td>' +
-                                                          '<td>' + item[i][2] + '</td>' +
-                                                          '<td>' + item[i][3] + '</td>' +
-                                                          '<td>' + item[i][4] + '</td>' +
-                                                          '</tr>');
-                                                  }
-                                              }
-                                          });
-                                      },
-                                      error: function (result) {
-                                          console.log('no result!')
-                                      }
-                                  });
-                              }
-                          });
-                        </script>
-                        {% endblock cardtable %}
-                    </div>
+
+
+            {% endblock cardheader %}
+          </div>
+          <div class="card-body">
+            {% block cardtable %}
+            <div class="container-fluid">
+              <div class="row mt-5 mb-5">
+                <div class="col-md-8">
+                  <img src="{% url 'videostream' %}" width="80%" class="img-thumbnail">
                 </div>
-            </div>
-        </main>
-        <footer class="py-4 bg-light mt-auto">
-            <div class="container-fluid px-4">
-                <div class="d-flex align-items-center justify-content-between small">
-                    <div class="text-muted">Copyright &copy; Newbie Team</div>
-                    <div>
-                        <a href="#">Privacy Policy</a>
-                        &middot;
-                        <a href="#">Terms &amp; Conditions</a>
-                    </div>
+                <div class="col-md-4" style="height:500px; overflow-y:auto;">
+                  <h3>Today Scan</h3>
+                  <table class="table" , >
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>NAMA</th>
+                        <th>WAKTU</th>
+                        <th>TANGGAL</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for absensi in Absensi %}
+                      <tr id="{{ absensi.id }}">
+                        <td>{{ absensi.id }}</td>
+                        <td>{{ absensi.mahasiswa }}</td>
+                        <td>{{ absensi.waktu }}</td>
+                        <td>{{ absensi.tanggal }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
                 </div>
+              </div>
             </div>
-        </footer>
-    </div>
-    </div>
+            <script>
+              setInterval(function () {
+                $.ajax({
+                  url: "{% url 'screen' %}",
+                  success: function (data) {
+                    $('#layoutSidenav_content').html(data);
+                  }
+                });
+              }, 4000)
+            </script>
+            {% endblock cardtable %}
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer class="py-4 bg-light mt-auto">
+      <div class="container-fluid px-4">
+        <div class="d-flex align-items-center justify-content-between small">
+          <div class="text-muted">Copyright &copy; Newbie Team</div>
+          <div>
+            <a href="#">Privacy Policy</a>
+            &middot;
+            <a href="#">Terms &amp; Conditions</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+  </div>
 
-    {% include "snippets/script.html" %}
+  {% include "snippets/script.html" %}
 </body>
 
 </html>

@@ -5,8 +5,6 @@ from . import views
 
 urlpatterns = [
     path('loaddata/', views.load_data, name='loaddata'),
-    path('counttoday/', views.absensi, name='counttoday'),
-    path('addvideostream/', views.addvideo_stream, name='addvideostream'),
     path('videostream/', views.video_stream, name='videostream'),
     path('detectimage', views.detect,name='detectimage'),
     path('trainimages/', views.trainer, name='trainimages'),
@@ -27,7 +25,7 @@ urlpatterns = [
     path('dosen/', views.dosenview ,name='listdosen'),
     path('sudahabsen/', views.sudahabsen),
     path('tidakabsen/', views.tidakabsen),
-    path('screen/', views.screen),
+    path('screen/', views.screen, name='screen'),
     path('jadwal/', views.jadwal, name='listjadwal'),
     path('createmember/', views.createmember, name='createmember'),
     path('createdosen/', views.createdosen, name='createdosen'),

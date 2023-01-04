@@ -38,32 +38,14 @@ justscanned = False
 
 datetime = datetime.datetime.now()
 
-def absensi(request):
-    mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="django_facerecon"
-    )
-    mycursor = mydb.cursor()
-    mycursor.execute("SELECT * FROM absen")
-    row = mycursor.fetchone()
-    rowcount= row[0]
-    return JsonResponse({'rowcount' : rowcount})
+def load_data(request):
+    absensi = Absen.objects.all()
+    data = {
+        'Absensi': absensi
+    }        
+    return JsonResponse(response = data)
 
-def load_data():
 
-    mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="django_facerecon"
-    )
-    mycursor = mydb.cursor()
-    
-    mycursor.execute("SELECT * FROM tb_absen")
-    data = mycursor.fetchall()
-    return JsonResponse(response= data)    
 
 def addvideo_stream(request):
     return StreamingHttpResponse(create_dataset(request),content_type='multipart/x-mixed-replace; boundary=frame')
@@ -71,85 +53,109 @@ def addvideo_stream(request):
 def video_stream(request):
 
     return StreamingHttpResponse(detect(request),content_type='multipart/x-mixed-replace; boundary=frame')
-		
-def detect(request):
 
-    faceDetect = cv2.CascadeClassifier(BASE_DIR + '/ml/haarcascade_frontalface_default.xml')
-
-    cam = cv2.VideoCapture(0)
-    # creating recognizer
-    rec = cv2.face.LBPHFaceRecognizer_create();
-    # loading the training data
-    rec.read(BASE_DIR + '/ml/recognizer/trainer.yml')
-    getId = 0
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    userId = 0
-    global justscanned
-    global pause_cnt
+def detect(request):  # generate frame by frame from camera
+    absensi = Absen.objects.all()
+    context = {
+        'Absensi': absensi
+    }        
+    def draw_boundary(img, classifier, scaleFactor, minNeighbors, color, text, clf):
+        gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        features = classifier.detectMultiScale(gray_image, scaleFactor, minNeighbors)
  
-    pause_cnt += 1
-    
-    
-    while (True):
-        ret, img = cam.read()
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        faces = faceDetect.detectMultiScale(gray, 1.3, 5)
-        for (x, y, w, h) in faces:
-            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-            getId, conf = rec.predict(gray[y:y + h, x:x + w])  # This will predict the id of the face
-            print(getId, conf)
-            confidence = "  {0}%".format(round(100 - conf))
-            # print conf;
-            if conf < 35:
-                
+        global justscanned
+        global pause_cnt
+        getId = 0
+        userId = 0
+        pause_cnt += 1
+ 
+        coords = []
+ 
+        for (x, y, w, h) in features:
+            cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
+            getId, pred = clf.predict(gray_image[y:y + h, x:x + w])
+            confidence = int(100 * (1 - pred / 300))
+ 
+            if confidence > 70 and not justscanned:
+                global cnt
+                cnt += 1
+ 
+                n = (100 / 30) * cnt
+                # w_filled = (n / 100) * w
+                w_filled = (cnt / 30) * w
                 try:
                     user = Mahasiswa.objects.get(id=getId)
                 except  Mahasiswa.DoesNotExist:
                     pass
-
-                print("User Name", user.nama)
-
+                # mycursor.execute("select a.img_person, b.prs_name, b.prs_skill "
+                #                  "  from img_dataset a "
+                #                  "  left join prs_mstr b on a.img_person = b.prs_nbr "
+                #                  " where img_id = " + str(id))
+                row = mycursor.fetchone()
+                    
+                # pname = row[1]
+                # pskill = row[2]
+                
+                mahasiswa = user.nama
+                print("User Name", mahasiswa)
+                
                 userId = getId
-                if user.nama:
-                    cv2.putText(img, user.nama, (x+5, y+h-10), font, 1, (0, 255, 0), 2)
+                cv2.putText(img, str(mahasiswa), (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 1, cv2.LINE_AA)
+                cv2.putText(img, str(int(n))+' %', (x + 20, y + h + 28), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (153, 255, 255), 2, cv2.LINE_AA)
+                
+                if  int(cnt) == 30:
                     
-                    
+                    cv2.rectangle(img, (x, y + h + 40), (x + w, y + h + 50), color, 2)
+                    cv2.rectangle(img, (x, y + h + 40), (x + int(w_filled), y + h + 50), (153, 255, 255), cv2.FILLED)
+                    cnt = 0
+ 
                     mycursor.execute("INSERT INTO tb_absen (mahasiswa, waktu, tanggal) VALUES ('"+user.nama+"', '"+str(datetime.now().time())+"' , '"+str(datetime.now().date())+"')")
                     mydb.commit()
+ 
                     
-                    time.sleep(1)
-
-                else:
-                    cv2.putText(img, "Detected", (x, y + h), font, 1, (0, 255, 0), 2)
+                    time.sleep(2)
+ 
+                    justscanned = True
+                    pause_cnt = 0
+ 
             else:
-                cv2.putText(img, "Unknown", (x, y + h), font, 1, (0, 0, 255), 2)
-
-            cv2.putText(img, str(confidence), (x + 5, y - 5), font, 1, (255, 255, 0), 1)
-        
-            # Printing that number below the face
-            # @Prams cam image, id, location,font style, color, stroke
-
+                if not justscanned:
+                    cv2.putText(img, 'UNKNOWN', (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
+                else:
+                    cv2.putText(img, ' ', (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2,cv2.LINE_AA)
+ 
+                if pause_cnt > 80:
+                    justscanned = False
+ 
+            coords = [x, y, w, h]
+        return coords
+ 
+    def recognize(img, clf, faceCascade):
+        coords = draw_boundary(img, faceCascade, 1.1, 10, (255, 255, 0), "Face", clf)
+        return img
+ 
+    faceCascade = cv2.CascadeClassifier(BASE_DIR + '/ml/haarcascade_frontalface_default.xml')
+    clf = cv2.face.LBPHFaceRecognizer_create()
+    clf.read(BASE_DIR + '/ml/recognizer/trainer.yml')
+ 
+    wCam, hCam = 400, 400
+ 
+    cap = cv2.VideoCapture(0)
+    cap.set(3, wCam)
+    cap.set(4, hCam)
+ 
+    while True:
+        ret, img = cap.read()
+        img = recognize(img, clf, faceCascade)
+ 
         frame = cv2.imencode('.jpg', img)[1].tobytes()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
  
-
-        if (cv2.waitKey(1) == ord('q')):
+        key = cv2.waitKey(1)
+        if key == 27:
             break
-        #elif (userId != 0):
-        #    cv2.waitKey(1000)
-        #    cam.release()
-        #    cv2.destroyAllWindows()
-        #    return redirect('/records/details/' + str(userId))
-
-    cam.release()
-    cv2.destroyAllWindows()
-    return redirect('attendance')
-
-def checkin(request):
-    return render(request, 'checkin.html')
-
+    return redirect( 'videostream', context)
 
 def trainer(request):
     '''
@@ -442,7 +448,12 @@ def tidakabsen(request):
 
 
 def screen(request):
-    return render(request, 'attendancescreen.html')
+    absensi = Absen.objects.all()
+    context = {
+        'Absensi': absensi,
+        
+    }
+    return render(request, 'attendancescreen.html', context)
 
 
 # jadwal
