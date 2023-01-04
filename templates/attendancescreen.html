@@ -48,13 +48,14 @@
                                   <table class="table">
                                       <thead>
                                           <tr>
-                                              <th>Person #</th>
-                                              <th>Name</th>
-                                              <th>Skill</th>
-                                              <th>Added</th>
+                                              <th>ID</th>
+                                              <th>NAMA</th>
+                                              <th>TANGGAL</th>
+                                              <th>WAKTU</th>
                                           </tr>
                                       </thead>
-                                      <tbody >
+                                      <tbody id="scandata" >
+                      
                                       </tbody>
                                   </table>
                               </div>
@@ -74,7 +75,7 @@
                         
                               function countTodayScan() {
                                   $.ajax({
-                                      url: '/countTodayScan',
+                                      url: '/counttoday',
                                       type: 'GET',
                                       dataType: 'json',
                                       success: function (data) {
@@ -93,7 +94,7 @@
                         
                               function reloadTable() {
                                   $.ajax({
-                                      url: '/loadData',
+                                      url: '/loaddata',
                                       type: 'GET',
                                       dataType: 'json',
                                       success: function (response) {

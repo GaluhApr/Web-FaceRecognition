@@ -16,18 +16,54 @@ from django.conf import settings
 from django.contrib import messages
 import numpy as np
 import os
-from django.http.response import StreamingHttpResponse
-
+from django.http.response import StreamingHttpResponse, JsonResponse
+import mysql.connector
+import datetime
+import time
 BASE_DIR = getattr(settings, 'BASE_DIR')
 
+
 # Create your views here.
+mydb = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="",
+    database="django_facerecon"
+)
+mycursor = mydb.cursor()
+
+cnt = 0
+pause_cnt = 0
+justscanned = False
+
+datetime = datetime.datetime.now()
 
 def absensi(request):
-    absensi = Absen.objects.all()
-    context = {
-        'Absen' : absensi,
-    }
-    return render(request, 'attendancescreen.html', context)
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="",
+        database="django_facerecon"
+    )
+    mycursor = mydb.cursor()
+    mycursor.execute("SELECT * FROM absen")
+    row = mycursor.fetchone()
+    rowcount= row[0]
+    return JsonResponse({'rowcount' : rowcount})
+
+def load_data():
+
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="",
+        database="django_facerecon"
+    )
+    mycursor = mydb.cursor()
+    
+    mycursor.execute("SELECT * FROM tb_absen")
+    data = mycursor.fetchall()
+    return JsonResponse(response= data)    
 
 def addvideo_stream(request):
     return StreamingHttpResponse(create_dataset(request),content_type='multipart/x-mixed-replace; boundary=frame')
@@ -37,6 +73,7 @@ def video_stream(request):
     return StreamingHttpResponse(detect(request),content_type='multipart/x-mixed-replace; boundary=frame')
 		
 def detect(request):
+
     faceDetect = cv2.CascadeClassifier(BASE_DIR + '/ml/haarcascade_frontalface_default.xml')
 
     cam = cv2.VideoCapture(0)
@@ -47,6 +84,12 @@ def detect(request):
     getId = 0
     font = cv2.FONT_HERSHEY_SIMPLEX
     userId = 0
+    global justscanned
+    global pause_cnt
+ 
+    pause_cnt += 1
+    
+    
     while (True):
         ret, img = cam.read()
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -59,6 +102,7 @@ def detect(request):
             confidence = "  {0}%".format(round(100 - conf))
             # print conf;
             if conf < 35:
+                
                 try:
                     user = Mahasiswa.objects.get(id=getId)
                 except  Mahasiswa.DoesNotExist:
@@ -69,19 +113,27 @@ def detect(request):
                 userId = getId
                 if user.nama:
                     cv2.putText(img, user.nama, (x+5, y+h-10), font, 1, (0, 255, 0), 2)
+                    
+                    
+                    mycursor.execute("INSERT INTO tb_absen (mahasiswa, waktu, tanggal) VALUES ('"+user.nama+"', '"+str(datetime.now().time())+"' , '"+str(datetime.now().date())+"')")
+                    mydb.commit()
+                    
+                    time.sleep(1)
+
                 else:
                     cv2.putText(img, "Detected", (x, y + h), font, 1, (0, 255, 0), 2)
             else:
                 cv2.putText(img, "Unknown", (x, y + h), font, 1, (0, 0, 255), 2)
 
             cv2.putText(img, str(confidence), (x + 5, y - 5), font, 1, (255, 255, 0), 1)
-            
+        
             # Printing that number below the face
             # @Prams cam image, id, location,font style, color, stroke
 
         frame = cv2.imencode('.jpg', img)[1].tobytes()
-        yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+ 
 
         if (cv2.waitKey(1) == ord('q')):
             break
@@ -94,6 +146,9 @@ def detect(request):
     cam.release()
     cv2.destroyAllWindows()
     return redirect('attendance')
+
+def checkin(request):
+    return render(request, 'checkin.html')
 
 
 def trainer(request):
