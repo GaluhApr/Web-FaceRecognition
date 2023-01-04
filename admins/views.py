@@ -201,8 +201,7 @@ def index(request):
     return render(request, 'dashboard.html')
 
 
-def attendance(request):
-    return render(request, 'attendance.html')
+
 
 # user
 
@@ -320,7 +319,12 @@ def dosenview(request):
     return render(request, 'dosen.html', context,)
 
 # matakuliah
-
+def attendance(request):
+    kehadiran = Absent.objects.all()
+    context = {
+        'kehadiran': kehadiran,
+    }
+    return render(request, 'attendance.html', context,)
 
 def creatematkul(request):
     kodeMK = request.POST["kodeMK"]
