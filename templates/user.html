@@ -22,36 +22,40 @@ Data Mahasiswa
 {% endblock header %}
 
 {% block cardheader %}
-<i class="fas fa-table me-1"></i>
+<i class="fa-solid fa-graduation-cap"></i>
 Data Mahasiswa
 {% endblock cardheader %}
 
 {% block cardtable %}
-<div class="container overflow-hidden">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-2">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addnewmember">
-                Tambah Mahasiswa
-            </button>
-        </div>
-        <div class="col">
-            <form action="{% url 'exportmahasiswa' %}" method="post">
-                {% csrf_token %}
-                <button class="btn btn-success" type="submit">Export</button>
-            </form>
-            <div class="row">
-                <div class="col col-sm-12">
-                    <a href="/admins/trainimages" class="btn btn-warning">Train</a>
-                </div>
+        <div class="col-sm-8">
+            <div class="d-grid gap-2 d-md-block">
+                {% comment %} Tambah Data Mahasiswa {% endcomment %}
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addnewmember">
+                    Tambah Data
+                </button>
+                
+                {% comment %} Training Data {% endcomment %}
+                <a href="/admins/trainimages" class="btn btn-warning">Training Foto</a>
+    
+                {% comment %} Tambah Foto {% endcomment %}
+                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addimage">
+                    Tambah Foto
+                </button>
             </div>
         </div>
-        <div class="col-2">
-            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addimage">
-                Tambah Foto
-            </button>
+        <div class="col-md-1 ms-md-auto">
+            {% comment %} Print Data {% endcomment %}
+            <form action="{% url 'exportmahasiswa' %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-success" type="submit">Cetak Data
+                </button>
+            </form>
         </div>
     </div>
 </div>
+
 <!-- Modal -->
 <div class="modal fade" id="addnewmember" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -81,18 +85,22 @@ Data Mahasiswa
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="/admins/adddataset/" enctype="multipart/form-data">
+                {% comment %} <form method="POST" action="/admins/adddataset/" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {{ imageform.as_p }}
+                    {{ imageform.as_p }} {% endcomment %}
+                    <form method="POST" action="/admins/adddataset/" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <fieldset>
+                          <div class="mb-3">
+                                {{ imageform.as_p }}
+                          </div>
+                          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary" value="Submit" id="submit">create dataset</button>
+                          </div>
+                        </fieldset>
+                      </form>
             </div>
-            <div class="col-md-8">
-                {% csrf_token %}
-                <img src="{% url 'addvideostream'%}" width="100%" class="img-thumbnail">
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" value="Submit" id="submit">create dataset</button>
-            </div>
-            </form>
         </div>
     </div>
 </div>
@@ -144,3 +152,4 @@ Data Mahasiswa
     </tbody>
 </table>
 {% endblock cardtable %}
+

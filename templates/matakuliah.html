@@ -12,14 +12,14 @@ Matakuliah
 {% endblock header %}
 
 {% block cardheader %}
-<i class="fas fa-table me-1"></i>
-Data Matkul
+<i class="fa-solid fa-file-contract"></i>
+Data Mata Kuliah
 {% endblock cardheader %}
 
 {% block cardtable %}
-<div class="container overflow-hidden">
+<div class="container-fluid overflow-hidden">
     <div class="row">
-        <div class="col-2">
+        <div class="col-sm-2">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addnewmember">
                 Tambah Matkul
             </button>
@@ -27,7 +27,7 @@ Data Matkul
         <div class="col">
             <form action="{% url 'exportmatkul' %}" method="post">
                 {% csrf_token %}
-                <button class="btn btn-success" type="submit">Export</button>
+                <button class="btn btn-success" type="submit">Cetak Data</button>
             </form>
         </div>
     </div>
