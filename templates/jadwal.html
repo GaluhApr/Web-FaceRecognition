@@ -12,12 +12,12 @@ Jadwal
 {% endblock header %}
 
 {% block cardheader %}
-<i class="fas fa-table me-1"></i>
+<i class="fa-solid fa-calendar-days"></i>
 Jadwal Matakuliah
 {% endblock cardheader %}
 
 {% block cardtable %}
-<div class="container overflow-hidden">
+<div class="container-fluid">
     <div class="row">
         <div class="col-2">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addnewmember">
@@ -27,7 +27,7 @@ Jadwal Matakuliah
         <div class="col">
             <form action="{% url 'exportjadwal' %}" method="post">
                 {% csrf_token %}
-                <button class="btn btn-success" type="submit">Export</button>
+                <button class="btn btn-success" type="submit">Cetak Data</button>
             </form>
         </div>
     </div>
