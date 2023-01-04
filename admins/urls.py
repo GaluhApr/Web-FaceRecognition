@@ -4,7 +4,7 @@ from . import views
 
 
 urlpatterns = [
-    path('loaddata/', views.load_data, name='loaddata'),
+    # path('loaddata/', views.load_data, name='loaddata'),
     path('videostream/', views.video_stream, name='videostream'),
     path('detectimage', views.detect,name='detectimage'),
     path('trainimages/', views.trainer, name='trainimages'),

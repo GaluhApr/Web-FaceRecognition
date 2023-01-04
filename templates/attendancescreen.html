@@ -17,7 +17,7 @@
 
 </head>
 
-<body class="sb-nav-fixed">
+<body class="sb-nav-fixed" id="absensi">
 
   <!-- navbar -->
   {% include "snippets/navscreen.html" %}
@@ -30,9 +30,6 @@
         <div class="card mb-4">
           <div class="card-header">
             {% block cardheader %}
-
-
-
 
             {% endblock cardheader %}
           </div>
@@ -56,7 +53,7 @@
                     </thead>
                     <tbody>
                       {% for absensi in Absensi %}
-                      <tr id="{{ absensi.id }}">
+                      <tr  >
                         <td>{{ absensi.id }}</td>
                         <td>{{ absensi.mahasiswa }}</td>
                         <td>{{ absensi.waktu }}</td>
@@ -69,14 +66,14 @@
               </div>
             </div>
             <script>
-              setInterval(function () {
+              setTimeout(function () {
                 $.ajax({
                   url: "{% url 'screen' %}",
                   success: function (data) {
-                    $('#layoutSidenav_content').html(data);
+                    $('#absensi').html(data);
                   }
                 });
-              }, 4000)
+              }, 1000)
             </script>
             {% endblock cardtable %}
           </div>

@@ -38,12 +38,12 @@ justscanned = False
 
 datetime = datetime.datetime.now()
 
-def load_data(request):
-    absensi = Absen.objects.all()
-    data = {
-        'Absensi': absensi
-    }        
-    return JsonResponse(response = data)
+# def load_data(request):
+#     data = {
+#         absensi: Absen.objects.all()
+        
+#     }
+#     return JsonResponse(data, safe=False)
 
 
 
@@ -102,18 +102,18 @@ def detect(request):  # generate frame by frame from camera
                 userId = getId
                 cv2.putText(img, str(mahasiswa), (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 1, cv2.LINE_AA)
                 cv2.putText(img, str(int(n))+' %', (x + 20, y + h + 28), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (153, 255, 255), 2, cv2.LINE_AA)
-                
+                cv2.rectangle(img, (x, y + h + 40), (x + w, y + h + 50), color, 2)
+                cv2.rectangle(img, (x, y + h + 40), (x + int(w_filled), y + h + 50), (153, 255, 255), cv2.FILLED)
                 if  int(cnt) == 30:
                     
-                    cv2.rectangle(img, (x, y + h + 40), (x + w, y + h + 50), color, 2)
-                    cv2.rectangle(img, (x, y + h + 40), (x + int(w_filled), y + h + 50), (153, 255, 255), cv2.FILLED)
+                    
                     cnt = 0
  
                     mycursor.execute("INSERT INTO tb_absen (mahasiswa, waktu, tanggal) VALUES ('"+user.nama+"', '"+str(datetime.now().time())+"' , '"+str(datetime.now().date())+"')")
                     mydb.commit()
  
                     
-                    time.sleep(2)
+                    time.sleep(1)
  
                     justscanned = True
                     pause_cnt = 0
@@ -255,14 +255,6 @@ def create_dataset(request):
 def signout(request):
     logout(request)
     return redirect('/')
-    
-
-def index(request):
-
-    return render(request, 'dashboard.html')
-
-
-
 
 # user
 
@@ -386,6 +378,14 @@ def attendance(request):
         'kehadiran': kehadiran,
     }
     return render(request, 'attendance.html', context,)
+
+def index(request):
+    kehadiran = Absen.objects.all()
+    context = {
+        'kehadiran': kehadiran,
+    }
+    return render(request, 'dashboard.html', context,)
+
 
 def creatematkul(request):
     kodeMK = request.POST["kodeMK"]
