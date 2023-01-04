@@ -27,7 +27,6 @@ def addvideo_stream(request):
 def video_stream(request):
     
     return StreamingHttpResponse(detect(request),content_type='multipart/x-mixed-replace; boundary=frame')
-
 		
 def detect(request):
     faceDetect = cv2.CascadeClassifier(BASE_DIR + '/ml/haarcascade_frontalface_default.xml')
@@ -68,6 +67,7 @@ def detect(request):
                 cv2.putText(img, "Unknown", (x, y + h), font, 1, (0, 0, 255), 2)
 
             cv2.putText(img, str(confidence), (x + 5, y - 5), font, 1, (255, 255, 0), 1)
+            
             # Printing that number below the face
             # @Prams cam image, id, location,font style, color, stroke
 
