@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
 from .forms import UserSelection
-
+from django.contrib.auth import authenticate, login, logout
 import cv2
 import numpy as np
 import os
@@ -11,9 +11,25 @@ from PIL import Image
 
 BASE_DIR = getattr(settings, 'BASE_DIR')
 
-def index(request):
-    context = {'forms': UserSelection }
-    return render(request, 'indeks.html', context)
+def loginview(request):
+    if request.method == 'POST':
+        username_login = request.POST['username']
+        password_login = request.POST['password']
+        
+        user = authenticate(request, username=username_login, password=password_login)
+    
+        if user is not None:
+            login(request, user)
+        else:
+            return redirect('login')   
+        
+        return redirect('dashboard')
+    
+    return render(request, 'index.html')
+
+# def index(request):
+#     context = {'forms': UserSelection }
+#     return render(request, 'index.html', context)
 
 def create_dataset(request):
     if request.method == "POST":

@@ -4,6 +4,7 @@ from . import views
 
 
 urlpatterns = [
+    path('loadData/', views.absensi, name='loadData'),
     path('addvideostream/', views.addvideo_stream, name='addvideostream'),
     path('videostream/', views.video_stream, name='videostream'),
     path('detectimage', views.detect,name='detectimage'),

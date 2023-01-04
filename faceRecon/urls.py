@@ -16,12 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import url
-from .views import index, detect, trainer, create_dataset
+from .views import detect, trainer, create_dataset, loginview
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^admins/', include('admins.urls'), name='admins'),
-    url(r'^$', index),
+    url(r'^$', loginview, name='login'),
     url(r'^create_dataset$', create_dataset),
     url(r'^detect$', detect),
     url(r'^trainer$', trainer),
