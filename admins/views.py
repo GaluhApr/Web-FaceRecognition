@@ -381,7 +381,7 @@ def dosenview(request):
 
 # matakuliah
 def attendance(request):
-    kehadiran = Absent.objects.all()
+    kehadiran = Absen.objects.all()
     context = {
         'kehadiran': kehadiran,
     }

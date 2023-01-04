@@ -20,120 +20,19 @@ Data Kehadiran
 <table id="datatablesSimple">
     <thead>
         <tr>
-            <th>NIM</th>
-            <th>Foto</th>
             <th>Nama</th>
-            <th>Kelas</th>
-            <th>Mata Kuliah</th>
             <th>Tanggal</th>
-            <th>Waktu</th>
-            <th>Status</th>
-            <th>Action</th>
+            <th>Waktu</th>>
         </tr>
     </thead>
-    <tfoot>
-        <tr>
-            <th>NIM</th>
-            <th>Foto</th>
-            <th>Nama</th>
-            <th>Kelas</th>
-            <th>Mata Kuliah</th>
-            <th>Tanggal</th>
-            <th>Waktu</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-    </tfoot>
     <tbody>
-        <tr>
-            <td>E41202134</td>
-            <td>-</td>
-            <td>Galuh</td>
-            <td>-</td>
-            <td>-</td>
-            <td>12/12/2022</td>
-            <td>09.00</td>
-            <td>Hadir</td>
-            <td>-</td>
-        </tr>
-        <tr>
-            <td>E41202984</td>
-            <td>-</td>
-            <td>Hilmi</td>
-            <td>-</td>
-            <td>-</td>
-            <td>11/11/2022</td>
-            <td>08.00</td>
-            <td>Hadir</td>
-            <td>-</td>
-        </tr>
-        <tr>
-            <td>E41201134</td>
-            <td>-</td>
-            <td>Ilham</td>
-            <td>-</td>
-            <td>-</td>
-            <td>12/12/2022</td>
-            <td>10.30</td>
-            <td>Hadir</td>
-            <td>-</td>
-        </tr>
-        <tr>
-            <td>E41209876</td>
-            <td>-</td>
-            <td>Nafil</td>
-            <td>-</td>
-            <td>-</td>
-            <td>11/12/2022</td>
-            <td>11.11</td>
-            <td>Sakit</td>
-            <td>-</td>
-        </tr>
-        <tr>
-            <td>E41208475</td>
-            <td>-</td>
-            <td>Tanti</td>
-            <td>-</td>
-            <td>-</td>
-            <td>10/9/2022</td>
-            <td>08.00</td>
-            <td>Izin</td>
-            <td>-</td>
-        </tr>
-        <tr>
-            <td>E41202121</td>
-            <td>-</td>
-            <td>Adi</td>
-            <td>-</td>
-            <td>-</td>
-            <td>11/11/2021</td>
-            <td>06.00</td>
-            <td>Hadir</td>
-            <td>-</td>
-        </tr>
-        <tr>
-            <td>E41202112</td>
-            <td>-</td>
-            <td>Budi</td>
-            <td>-</td>
-            <td>-</td>
-            <td>08/10/2022</td>
-            <td>12.00</td>
-            <td>-</td>
-            <td>-</td>
-        </tr>
-        <tr>
-            <td>E41202456</td>
-            <td>-</td>
-            <td>Candra</td>
-            <td>-</td>
-            <td>-</td>
-            <td>11/11/2022</td>
-            <td>09.10</td>
-            <td>-</td>
-            <td>-</td>
-        </tr>
-
+            {% for kehadiran in kehadiran %}
+            <tr>
+                <td>{{ kehadiran.mahasiswa}}</td>
+                <td>{{ kehadiran.tanggal}}</td>
+                <td>{{ kehadiran.waktu }}</td>
+            </tr>
+        {% endfor %}
     </tbody>
 </table>
 {% endblock cardtable %}
