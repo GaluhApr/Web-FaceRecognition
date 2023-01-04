@@ -25,7 +25,7 @@ def loginview(request):
         
         return redirect('dashboard')
     
-    return render(request, 'index.html')
+    return render(request, 'indeks.html')
 
 # def index(request):
 #     context = {'forms': UserSelection }
